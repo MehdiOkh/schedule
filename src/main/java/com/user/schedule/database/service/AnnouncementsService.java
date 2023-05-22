@@ -1,9 +1,12 @@
 package com.user.schedule.database.service;
 
-import com.user.schedule.database.model.*;
 import com.user.schedule.database.repository.AnnouncementRepo;
 import com.user.schedule.database.repository.MasterRepo;
 import com.user.schedule.database.repository.TimeTableRepo;
+import com.user.schedule.database.model.Announcement;
+import com.user.schedule.database.model.Course;
+import com.user.schedule.database.model.TimeTable;
+import com.user.schedule.exceptions.CourseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +52,7 @@ public class AnnouncementsService {
         if (announcementRepo.findById(id).isPresent()){
             announcementRepo.deleteById(id);
         }else {
-            throw new Exception();
+            throw new CourseException.AnnouncementNotFound("announcement not found");
         }
 
     }

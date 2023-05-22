@@ -1,8 +1,8 @@
 package com.user.schedule.database.service;
 
 import com.user.schedule.database.model.Bell;
-import com.user.schedule.database.model.User;
 import com.user.schedule.database.repository.BellRepo;
+import com.user.schedule.exceptions.DayAndBellException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,25 +15,25 @@ public class BellsService {
     @Autowired
     private BellRepo bellRepo;
 
-    public Bells getBellList(int pageSize, int page){
-        return new Bells(pageSize,page);
+    public Bells getBellList(int pageSize, int page) {
+        return new Bells(pageSize, page);
     }
 
-    public Bell addBell(Bell bell){
+    public Bell addBell(Bell bell) {
         return bellRepo.save(bell);
     }
 
-    public Bell editBell(int id,Bell bell) throws Exception {
+    public Bell editBell(int id, Bell bell) throws Exception {
         Bell formerBell;
-        if (bellRepo.findById(id).isPresent()){
+        if (bellRepo.findById(id).isPresent()) {
             formerBell = bellRepo.findById(id).get();
-        }else {
+        } else {
             throw new Exception();
         }
         if (!bell.getLabel().equals("")) {
             formerBell.setLabel(bell.getLabel());
         }
-        if (bell.getBellOfDay()!=0){
+        if (bell.getBellOfDay() != 0) {
             formerBell.setBellOfDay(bell.getBellOfDay());
         }
         bellRepo.flush();
@@ -42,9 +42,9 @@ public class BellsService {
 
     public void deleteBell(int id) throws Exception {
 
-        if (bellRepo.findById(id).isPresent()){
+        if (bellRepo.findById(id).isPresent()) {
             bellRepo.deleteById(id);
-        }else {
+        } else {
             throw new Exception();
         }
 
@@ -53,17 +53,16 @@ public class BellsService {
 
     public Bell getById(int id) throws Exception {
         Bell bell;
-        if (bellRepo.findById(id).isPresent()){
+        if (bellRepo.findById(id).isPresent()) {
             bell = bellRepo.findById(id).get();
-        }else {
-            throw new Exception();
+        } else {
+            throw new DayAndBellException.BellNotFoundException("Bell not found");
         }
         return bell;
     }
 
 
-
-    public class Bells{
+    public class Bells {
         private List<Bell> list = null;
 
         private int pageSize;
@@ -77,16 +76,17 @@ public class BellsService {
             this.list = listMaker(pageSize, page);
 
         }
-        public List<Bell> listMaker(int pageSize, int page){
+
+        public List<Bell> listMaker(int pageSize, int page) {
             List<Bell> list = bellRepo.findAll();
             List<Bell> temp = new ArrayList<>();
 
-            int begin = (page-1)*pageSize==0? 0:(page-1)*pageSize;
-            int end = page*pageSize;
+            int begin = (page - 1) * pageSize == 0 ? 0 : (page - 1) * pageSize;
+            int end = page * pageSize;
 
-            this.totalPage =(int) Math.ceil((double)list.size()/(double)pageSize);
+            this.totalPage = (int) Math.ceil((double) list.size() / (double) pageSize);
 
-            while (begin<end && list.size()>begin){
+            while (begin < end && list.size() > begin) {
                 temp.add(list.get(begin++));
             }
 

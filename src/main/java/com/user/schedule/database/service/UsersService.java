@@ -1,10 +1,8 @@
 package com.user.schedule.database.service;
 
-import com.user.schedule.database.model.Admin;
-import com.user.schedule.database.model.Master;
-import com.user.schedule.database.model.Student;
-import com.user.schedule.database.model.User;
+import com.user.schedule.database.model.*;
 import com.user.schedule.database.repository.UserRepo;
+import com.user.schedule.exceptions.MajorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,35 +17,53 @@ public class UsersService {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private MajorService majorService;
+    @Autowired
+    private UnitPickTimeService unitPickTimeService;
+
     public Users getUserList(String lastName, int pageSize, int page) {
-        return new Users(lastName,pageSize,page);
+        return new Users(lastName, pageSize, page);
     }
-    public User findByCode(String code){
+
+    public User findByCode(String code) {
         return userRepo.findByCode(code);
     }
 
-    public User addUser(User user){
-        switch (user.getRole()){
+    public User addUser(User user) throws Exception {
+        Major major = null;
+        UnitPickTime unitPickTime = null;
+        if (user.getMajor() != null) {
+            major = majorService.getByName(user.getMajor());
+        }
+
+        if (user.getEntranceYear() != 0) {
+            unitPickTime = unitPickTimeService.getByYear(user.getEntranceYear());
+        }
+        switch (user.getRole()) {
             case "ADMIN":
                 Admin admin = new Admin(user);
                 user.getAdminList().add(admin);
                 break;
             case "STUDENT":
-                Student student = new Student(user);
+                if (major == null) throw new MajorException.MajorNotFoundException("Major is Required");
+                if (unitPickTime == null) throw new MajorException.MajorNotFoundException("Entrance year is Required");
+                Student student = new Student(user, major, unitPickTime);
                 user.getStudentList().add(student);
                 break;
             case "MASTER":
-                Master master = new Master(user);
+                if (major == null) throw new MajorException.MajorNotFoundException("Major is Required");
+                Master master = new Master(user, major);
                 user.getMasterList().add(master);
                 break;
         }
         return userRepo.save(user);
     }
 
-    public List<User> addUsersList(List<User> userList){
+    public List<User> addUsersList(List<User> userList) throws Exception {
 
         List<User> temp = new LinkedList<>();
-        for (User user : userList){
+        for (User user : userList) {
             temp.add(addUser(user));
         }
         return temp;
@@ -57,36 +73,54 @@ public class UsersService {
 
         User user;
 
-        if (userRepo.findById(id).isPresent()){
+        if (userRepo.findById(id).isPresent()) {
             user = userRepo.findById(id).get();
-        }else {
+        } else {
             throw new Exception();
         }
 
         return user;
     }
 
-    public User editUser(int id, User user ) throws Exception {
+    public User putUser(int id, UpdateUser user) throws Exception {
         User formerUser;
-        if (userRepo.findById(id).isPresent()){
+        if (userRepo.findById(id).isPresent()) {
             formerUser = userRepo.findById(id).get();
-        }else {
+        } else {
             throw new Exception();
         }
 
         if (!user.getFirstName().equals("")) {
             formerUser.setFirstName(user.getFirstName());
         }
-        if (!user.getLastName().equals("")){
+        if (!user.getLastName().equals("")) {
             formerUser.setLastName(user.getLastName());
         }
-        if (!user.getPassword().equals("")){
+        userRepo.flush();
+        return userRepo.findById(id).get();
+    }
+
+    public User editUser(int id, User user) throws Exception {
+        User formerUser;
+        if (userRepo.findById(id).isPresent()) {
+            formerUser = userRepo.findById(id).get();
+        } else {
+            throw new Exception();
+        }
+
+        if (!user.getFirstName().equals("")) {
+            formerUser.setFirstName(user.getFirstName());
+        }
+        if (!user.getLastName().equals("")) {
+            formerUser.setLastName(user.getLastName());
+        }
+        if (!user.getPassword().equals("")) {
             formerUser.setPassword(user.getPassword());
         }
-        if (!user.getRole().equals("")){
+        if (!user.getRole().equals("")) {
             formerUser.setRole(user.getRole());
         }
-        if (!user.getCode().equals("")){
+        if (!user.getCode().equals("")) {
             formerUser.setCode(user.getCode());
         }
         userRepo.flush();
@@ -95,15 +129,33 @@ public class UsersService {
 
     public void deleteUser(int id) throws Exception {
 
-        if (userRepo.findById(id).isPresent()){
+        if (userRepo.findById(id).isPresent()) {
             userRepo.deleteById(id);
-        }else {
+        } else {
             throw new Exception();
         }
 
     }
 
-    public class Users{
+    public static class UpdateUser {
+        String firstName;
+        String lastName;
+
+        public UpdateUser(String firstName, String lastName) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+    }
+
+    public class Users {
 
         private List<User> list = null;
 
@@ -118,25 +170,26 @@ public class UsersService {
             this.list = listMaker(lastName, pageSize, page);
 
         }
-        public List<User> listMaker(String lastName, int pageSize, int page){
+
+        public List<User> listMaker(String lastName, int pageSize, int page) {
             List<User> list = new ArrayList<>();
             List<User> temp = new ArrayList<>();
 
-            int begin = (page-1)*pageSize==0? 0:(page-1)*pageSize;
-            int end = page*pageSize;
+            int begin = (page - 1) * pageSize == 0 ? 0 : (page - 1) * pageSize;
+            int end = page * pageSize;
 
-            if (!lastName.equals("")){
-                for (User user : userRepo.findAll()){
-                    if(user.getLastName().equalsIgnoreCase(lastName)){
+            if (!lastName.equals("")) {
+                for (User user : userRepo.findAll()) {
+                    if (user.getLastName().equalsIgnoreCase(lastName)) {
                         list.add(user);
                     }
                 }
-            }else {
+            } else {
                 list = userRepo.findAll();
             }
-            this.totalPage =(int) Math.ceil((double)list.size()/(double)pageSize);
+            this.totalPage = (int) Math.ceil((double) list.size() / (double) pageSize);
 
-            while (begin<end && list.size()>begin){
+            while (begin < end && list.size() > begin) {
                 temp.add(list.get(begin++));
             }
 

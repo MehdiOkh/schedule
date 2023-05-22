@@ -1,9 +1,8 @@
 package com.user.schedule.database.service;
 
-import com.user.schedule.database.model.*;
-import com.user.schedule.database.repository.BellRepo;
-import com.user.schedule.database.repository.DayRepo;
 import com.user.schedule.database.repository.TimeTableBellRepo;
+import com.user.schedule.database.model.TimeTableBell;
+import com.user.schedule.exceptions.UnitPickException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +40,8 @@ public class TimeTableBellsService {
         if (timeTableBell.getDay().getId()!=0){
             formerTimeTableBell.setBell(timeTableBell.getBell());
         }
+        formerTimeTableBell.setRoomNumber(timeTableBell.getRoomNumber());
+        formerTimeTableBell.setWeekType(timeTableBell.getWeekType());
         timeTableBellRepo.flush();
         return timeTableBellRepo.findById(id).get();
     }
@@ -60,7 +61,7 @@ public class TimeTableBellsService {
         if (timeTableBellRepo.findById(id).isPresent()){
             timeTableBell = timeTableBellRepo.findById(id).get();
         }else {
-            throw new Exception();
+            throw new UnitPickException.UnitNotFound("time table not found");
         }
         return timeTableBell;
     }

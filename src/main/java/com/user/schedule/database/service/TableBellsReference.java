@@ -1,23 +1,24 @@
 package com.user.schedule.database.service;
 
-import com.user.schedule.database.model.Bell;
-import com.user.schedule.database.model.Day;
-import com.user.schedule.database.repository.BellRepo;
-import com.user.schedule.database.repository.DayRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 
-
+import com.user.schedule.database.model.TimeTableBell;
 
 public class TableBellsReference {
 
     private int dayId;
     private int bellId;
 
-    public TableBellsReference(int dayId, int bellId) {
+    private TimeTableBell.WeekType weekType;
+
+    private int roomNumber;
+
+    public TableBellsReference(int dayId, int bellId, TimeTableBell.WeekType weekType, int roomNumber) {
         this.dayId = dayId;
         this.bellId = bellId;
-
+        this.weekType = weekType;
+        this.roomNumber = roomNumber;
     }
+
 
     public int getDayId() {
         return dayId;
@@ -25,5 +26,13 @@ public class TableBellsReference {
 
     public int getBellId() {
         return bellId;
+    }
+
+    public TimeTableBell.WeekType getWeekType() {
+        return weekType;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
     }
 }

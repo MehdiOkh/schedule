@@ -1,7 +1,7 @@
 package com.user.schedule.database.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -31,18 +31,25 @@ public class User {
     @Column(name = "user_code")
     private String code;
 
+    @Transient
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private String major;
+
+    @Transient
+    @JsonIgnore
+    private int entranceYear;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Student> studentList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Admin> adminList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Master> masterList = new ArrayList<>();
-
 
     public User() {
     }
@@ -53,6 +60,15 @@ public class User {
         this.password = password;
         this.role = role;
         this.code = code;
+    }
+
+    public User(String firstName, String lastName, String password, String role, String code, String major) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.role = role;
+        this.code = code;
+        this.major = major;
     }
 
     public List<Student> getStudentList() {
@@ -106,6 +122,7 @@ public class User {
     public void setCode(String code) {
         this.code = code;
     }
+
     public List<Admin> getAdminList() {
         return adminList;
     }
@@ -120,5 +137,21 @@ public class User {
 
     public void setMasterList(List<Master> masterList) {
         this.masterList = masterList;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public int getEntranceYear() {
+        return entranceYear;
+    }
+
+    public void setEntranceYear(int entranceYear) {
+        this.entranceYear = entranceYear;
     }
 }

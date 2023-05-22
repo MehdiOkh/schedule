@@ -2,6 +2,7 @@ package com.user.schedule.database.service;
 
 import com.user.schedule.database.model.Day;
 import com.user.schedule.database.repository.DayRepo;
+import com.user.schedule.exceptions.DayAndBellException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +55,7 @@ public class DaysService {
         if (dayRepo.findById(id).isPresent()){
             Day = dayRepo.findById(id).get();
         }else {
-            throw new Exception();
+            throw new DayAndBellException.DayNotFoundException("Day not found");
         }
         return Day;
     }

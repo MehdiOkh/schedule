@@ -19,12 +19,16 @@ public class Course {
     @Column(name = "title")
     private String title;
 
+    @Transient
+    @JsonIgnore
+    private String[] prerequisiteList;
+
 //    @ManyToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "master_id")
 //    private Master master;
 
     @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "master_course_join",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -33,8 +37,18 @@ public class Course {
     private List<Master> masterList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<TimeTable> timeTableList = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "course_prerequisite_table",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "prerequisite_id")
+    )
+    private List<Course> coursePrerequisiteList = new ArrayList<>();
+
 
     public Course(int unitsCount, String title) {
         this.unitsCount = unitsCount;
@@ -86,5 +100,21 @@ public class Course {
 
     public void setMasterList(List<Master> masterList) {
         this.masterList = masterList;
+    }
+
+    public List<Course> getCoursePrerequisiteList() {
+        return coursePrerequisiteList;
+    }
+
+    public void setCoursePrerequisiteList(List<Course> coursePrerequisiteList) {
+        this.coursePrerequisiteList = coursePrerequisiteList;
+    }
+
+    public String[] getPrerequisiteList() {
+        return prerequisiteList;
+    }
+
+    public void setPrerequisiteList(String[] prerequisiteList) {
+        this.prerequisiteList = prerequisiteList;
     }
 }
