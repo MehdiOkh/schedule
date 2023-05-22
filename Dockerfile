@@ -12,7 +12,7 @@ RUN mvn -f /home/app/pom.xml clean package
 FROM openjdk:11
 #WORKDIR /app
 #COPY ./target/schedule-0.0.1-SNAPSHOT.jar schedule-0.0.1-SNAPSHOT.jar
-ARG JAR_FILE=./target/schedule-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=./schedule/target/schedule-0.0.1-SNAPSHOT.jar
 ADD ${JAR_FILE} app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/schedule-0.0.1-SNAPSHOT.jar"]
