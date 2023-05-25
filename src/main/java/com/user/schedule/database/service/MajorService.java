@@ -18,11 +18,11 @@ public class MajorService {
         return majorRepo.save(major);
     }
 
-    public Majors getDayList(int pageSize, int page) {
+    public Majors getMajorList(int pageSize, int page) {
         return new Majors(pageSize, page);
     }
 
-    public Major editDay(int id, Major Major) throws Exception {
+    public Major editMajor(int id, Major Major) throws Exception {
         Major formerMajor;
         if (majorRepo.findById(id).isPresent()){
             formerMajor = majorRepo.findById(id).get();

@@ -170,9 +170,33 @@ public class CourseController {
 
 
     // <-----------------   MAJORS PART ---------------------->
-    @PostMapping("/api/majors/add")
+    @PostMapping("/api/majors")
     public ResponseForm addMajor(@RequestBody Major major) {
         return new ResponseForm("success", null, majorService.addMajor(major));
+    }
+
+    @GetMapping("/api/majors")
+    public ResponseForm getMajorList(@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                 @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+        return new ResponseForm("success", null, majorService.getMajorList(pageSize, page));
+    }
+
+    @GetMapping("/api/majors/{name}")
+    public ResponseForm getMajorByName(@PathVariable String name) throws Exception {
+        return new ResponseForm("success", null, majorService.getByName(name));
+    }
+
+    @PutMapping("/api/majors/{name}")
+    public ResponseForm editMajor(@PathVariable String name, @RequestBody Major major) throws Exception {
+        Major currentMajor = majorService.getByName(name);
+        return new ResponseForm("success", null, majorService.editMajor(currentMajor.getId(),major));
+    }
+
+    @DeleteMapping("/api/majors/{name}")
+    public ResponseForm deleteMajor(@PathVariable String name) throws Exception {
+        Major currentMajor = majorService.getByName(name);
+        majorService.deleteById(currentMajor.getId());
+        return new ResponseForm("success", null, null);
     }
 
     // <-----------------   COURSES PREREQUISITE PART ---------------------->
