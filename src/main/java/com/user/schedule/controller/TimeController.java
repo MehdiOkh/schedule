@@ -62,6 +62,13 @@ public class TimeController {
         return new ResponseForm("success", null, unitPickTimeService.getByYear(year));
     }
 
+    @GetMapping("/api/unit-pick-time/")
+    public ResponseForm getUnitPickTimeList(
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) throws Exception {
+        return new ResponseForm("success", null, unitPickTimeService.getUnitPickTimeList(pageSize, page));
+    }
+
     @PutMapping("/api/unit-pick-time/{year}")
     public ResponseForm updateUnitPickTime(@RequestBody UnitPickTime unitPickTime,
                                            @PathVariable int year) throws Exception {
