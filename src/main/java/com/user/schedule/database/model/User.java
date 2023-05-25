@@ -32,11 +32,11 @@ public class User {
     private String code;
 
     @Transient
-    @JsonIgnore
+//    @JsonIgnore
     private String major;
 
     @Transient
-    @JsonIgnore
+//    @JsonIgnore
     private int entranceYear;
 
     @JsonIgnore
