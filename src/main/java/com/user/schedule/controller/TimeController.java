@@ -57,9 +57,9 @@ public class TimeController {
         return new ResponseForm("success", null, unitPickTimeService.addUnitPickTime(unitPickTime));
     }
 
-    @GetMapping("/api/unit-pick-time/{year}")
-    public ResponseForm getUnitPickTime(@PathVariable int year) throws Exception {
-        return new ResponseForm("success", null, unitPickTimeService.getByYear(year));
+    @GetMapping("/api/unit-pick-time/{id}")
+    public ResponseForm getUnitPickTime(@PathVariable int id) throws Exception {
+        return new ResponseForm("success", null, unitPickTimeService.getById(id));
     }
 
     @GetMapping("/api/unit-pick-time/")
@@ -69,15 +69,15 @@ public class TimeController {
         return new ResponseForm("success", null, unitPickTimeService.getUnitPickTimeList(pageSize, page));
     }
 
-    @PutMapping("/api/unit-pick-time/{year}")
+    @PutMapping("/api/unit-pick-time/{id}")
     public ResponseForm updateUnitPickTime(@RequestBody UnitPickTime unitPickTime,
-                                           @PathVariable int year) throws Exception {
-        return new ResponseForm("success", null, unitPickTimeService.editUnitPickTime(year, unitPickTime));
+                                           @PathVariable int id) throws Exception {
+        return new ResponseForm("success", null, unitPickTimeService.editUnitPickTime(id, unitPickTime));
     }
 
-    @DeleteMapping("/api/unit-pick-time/{year}")
-    public ResponseForm updateUnitPickTime(@PathVariable int year) throws Exception {
-        unitPickTimeService.deleteById(year);
+    @DeleteMapping("/api/unit-pick-time/{id}")
+    public ResponseForm updateUnitPickTime(@PathVariable int id) throws Exception {
+        unitPickTimeService.deleteById(id);
         return new ResponseForm("success", null, null);
     }
 

@@ -24,9 +24,9 @@ public class MajorService {
 
     public Major editMajor(int id, Major Major) throws Exception {
         Major formerMajor;
-        if (majorRepo.findById(id).isPresent()){
+        if (majorRepo.findById(id).isPresent()) {
             formerMajor = majorRepo.findById(id).get();
-        }else {
+        } else {
             throw new Exception();
         }
         if (!Major.getMajorName().equals("")) {
@@ -35,7 +35,7 @@ public class MajorService {
         majorRepo.flush();
         return majorRepo.findById(id).get();
     }
-    
+
     public Major getById(int id) throws Exception {
         Major major;
         if (majorRepo.findById(id).isPresent()) {

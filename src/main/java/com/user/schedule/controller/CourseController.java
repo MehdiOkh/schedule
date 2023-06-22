@@ -177,25 +177,26 @@ public class CourseController {
 
     @GetMapping("/api/majors")
     public ResponseForm getMajorList(@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                 @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+                                     @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
         return new ResponseForm("success", null, majorService.getMajorList(pageSize, page));
     }
 
-    @GetMapping("/api/majors/{name}")
-    public ResponseForm getMajorByName(@PathVariable String name) throws Exception {
-        return new ResponseForm("success", null, majorService.getByName(name));
+    @GetMapping("/api/majors/{id}")
+    public ResponseForm getMajorByName(@PathVariable int id) throws Exception {
+        return new ResponseForm("success", null, majorService.getById(id));
     }
 
-    @PutMapping("/api/majors/{name}")
-    public ResponseForm editMajor(@PathVariable String name, @RequestBody Major major) throws Exception {
-        Major currentMajor = majorService.getByName(name);
-        return new ResponseForm("success", null, majorService.editMajor(currentMajor.getId(),major));
+
+    @PutMapping("/api/majors/{id}")
+    public ResponseForm editMajor(@PathVariable int id, @RequestBody Major major) throws Exception {
+//        Major currentMajor = majorService.getById(id);
+        return new ResponseForm("success", null, majorService.editMajor(id, major));
     }
 
-    @DeleteMapping("/api/majors/{name}")
-    public ResponseForm deleteMajor(@PathVariable String name) throws Exception {
-        Major currentMajor = majorService.getByName(name);
-        majorService.deleteById(currentMajor.getId());
+    @DeleteMapping("/api/majors/{id}")
+    public ResponseForm deleteMajor(@PathVariable int id) throws Exception {
+//        Major currentMajor = majorService.getById(id);
+        majorService.deleteById(id);
         return new ResponseForm("success", null, null);
     }
 
