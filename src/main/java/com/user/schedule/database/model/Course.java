@@ -1,6 +1,7 @@
 package com.user.schedule.database.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "course_table")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +22,7 @@ public class Course {
     private String title;
 
     @Transient
-    @JsonIgnore
+//    @JsonIgnore
     private String[] prerequisiteList;
 
 //    @ManyToOne(cascade = CascadeType.ALL)

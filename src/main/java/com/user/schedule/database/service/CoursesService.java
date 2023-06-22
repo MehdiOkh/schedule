@@ -104,6 +104,7 @@ public class CoursesService {
 
     public Course editCourse(int id, Course course) throws Exception {
         Course formerCourse;
+        List<Course> prerequisites = new ArrayList<>();
         if (courseRepo.findById(id).isPresent()) {
             formerCourse = courseRepo.findById(id).get();
         } else {
@@ -115,6 +116,13 @@ public class CoursesService {
         }
         if (course.getUnitsCount() != 0) {
             formerCourse.setUnitsCount(course.getUnitsCount());
+        }
+        if (course.getPrerequisiteList() != null) {
+            for (String courseName : course.getPrerequisiteList()
+            ) {
+                prerequisites.add(getCourseByName(courseName));
+            }
+            formerCourse.setCoursePrerequisiteList(prerequisites);
         }
         courseRepo.flush();
         return courseRepo.findById(id).get();
