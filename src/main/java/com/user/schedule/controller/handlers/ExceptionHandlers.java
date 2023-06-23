@@ -57,6 +57,7 @@ public class ExceptionHandlers {
     @ExceptionHandler
     public ResponseEntity<ResponseForm> announcementNotFound(CourseException.AnnouncementNotFound exception) {
         ResponseForm response = new ResponseForm("error", exception.getMessage(), null);
+        System.out.println("ehy");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

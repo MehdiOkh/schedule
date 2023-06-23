@@ -63,7 +63,7 @@ public class AnnouncementsService {
         if (announcementRepo.findById(id).isPresent()){
             announcement = announcementRepo.findById(id).get();
         }else {
-            throw new Exception();
+            throw new CourseException.AnnouncementNotFound("announcement not found");
         }
         return announcement;
     }

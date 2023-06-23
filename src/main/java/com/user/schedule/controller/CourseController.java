@@ -245,26 +245,16 @@ public class CourseController {
     }
 
     @GetMapping("/api/announcements/{id}")
-    public ResponseForm getAnnouncementById(@PathVariable int id) {
-        try {
-            Announcement announcement = announcementsService.getById(id);
-            return new ResponseForm("success", null, announcement);
+    public ResponseForm getAnnouncementById(@PathVariable int id) throws Exception {
+        Announcement announcement = announcementsService.getById(id);
+        return new ResponseForm("success", null, announcement);
 
-        } catch (Exception e) {
-            return new ResponseForm("failed", "invalid id " + e.getMessage(), null);
-        }
     }
 
     @PutMapping("/api/announcements/{id}")
-    public ResponseForm updateAnnouncement(@PathVariable int id, @RequestBody AnnouncementReference reference) {
-        try {
+    public ResponseForm updateAnnouncement(@PathVariable int id, @RequestBody AnnouncementReference reference) throws Exception {
             Announcement announcement = new Announcement(timeTableService.getById(reference.getTimeTable()), reference.getMessage());
             return new ResponseForm("success", null, announcementsService.editAnnouncement(id, announcement));
-        } catch (Exception e) {
-            return new ResponseForm("failed", "bad credential " + e.getMessage(), null);
-
-        }
-
     }
 
     @DeleteMapping("/api/announcements/{id}")
@@ -294,6 +284,7 @@ public class CourseController {
         return new ResponseForm("success", null, announcements);
 
     }
+
     @GetMapping("/api/announcements/master-announcements")
     public ResponseForm masterAnnouncements(@RequestHeader String authorization) {
         String masterCode;
