@@ -1,20 +1,15 @@
 package com.user.schedule.controller;
 
+import com.user.schedule.database.model.Master;
 import com.user.schedule.database.model.Profile;
-import com.user.schedule.database.model.UnitPickTime;
 import com.user.schedule.database.model.User;
+import com.user.schedule.database.service.MasterService;
 import com.user.schedule.database.service.ResponseForm;
-import com.user.schedule.database.service.UnitPickTimeService;
 import com.user.schedule.database.service.UsersService;
 import com.user.schedule.security.AuthenticateRequest;
 import com.user.schedule.security.AuthenticateResponse;
 import com.user.schedule.security.service.JwtUtil;
 import com.user.schedule.security.service.MyUserDetailService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springdoc.core.annotations.RouterOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +27,8 @@ public class UsersController {
 
     private final UsersService usersService;
 
+    private final MasterService masterService;
+
     private final JwtUtil jwtTokenUtil;
 
 
@@ -41,10 +38,11 @@ public class UsersController {
 
 
     @Autowired
-    public UsersController(UsersService usersService, JwtUtil jwtTokenUtil,
+    public UsersController(UsersService usersService, MasterService masterService, JwtUtil jwtTokenUtil,
                            AuthenticationManager authenticationManager,
                            MyUserDetailService myUserDetailService) {
         this.usersService = usersService;
+        this.masterService = masterService;
         this.jwtTokenUtil = jwtTokenUtil;
 
         this.authenticationManager = authenticationManager;
@@ -103,6 +101,16 @@ public class UsersController {
         }
     }
 
+    @GetMapping("/api/masters")
+    public ResponseForm getMastersList(
+            @RequestParam(value = "search", required = false, defaultValue = "") String name,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+        System.out.println(name);
+        List<Master> masters = masterService.getMastersList(name, pageSize, page);
+        return new ResponseForm("success", null, masters);
+    }
+
     @PutMapping("/api/users/{id}")
     public ResponseForm putUser(@PathVariable int id, @RequestBody UsersService.UpdateUser user) {
         try {
@@ -137,10 +145,10 @@ public class UsersController {
     public ResponseForm getUserProfile(@RequestHeader String authorization) {
 
         try {
-            String userCode ;
+            String userCode;
             if (authorization.startsWith("Bearer ")) {
                 userCode = jwtTokenUtil.extractUsername(authorization.substring(7));
-            }else{
+            } else {
                 userCode = jwtTokenUtil.extractUsername(authorization);
             }
             User user = usersService.findByCode(userCode);
@@ -155,11 +163,11 @@ public class UsersController {
     @PostMapping("api/users/profile")
     public ResponseForm updateUserProfile(@RequestBody Profile.UserPass userPass, @RequestHeader String authorization) {
         try {
-            String userCode ;
+            String userCode;
 
             if (authorization.startsWith("Bearer ")) {
                 userCode = jwtTokenUtil.extractUsername(authorization.substring(7));
-            }else{
+            } else {
                 userCode = jwtTokenUtil.extractUsername(authorization);
             }
 
@@ -185,7 +193,7 @@ public class UsersController {
             String userCode;
             if (authorization.startsWith("Bearer ")) {
                 userCode = jwtTokenUtil.extractUsername(authorization.substring(7));
-            }else{
+            } else {
                 userCode = jwtTokenUtil.extractUsername(authorization);
             }
 
@@ -208,7 +216,7 @@ public class UsersController {
     @PostMapping("/api/users/add-list")
     public ResponseForm addUsersList(@RequestBody List<User> users) throws Exception {
 //        try {
-            return new ResponseForm("success", null, usersService.addUsersList(users));
+        return new ResponseForm("success", null, usersService.addUsersList(users));
 //        } catch (Exception e) {
 //            return new ResponseForm("failed", "invalid input", null);
 //        }
