@@ -233,14 +233,10 @@ public class CourseController {
     }
 
     @PostMapping("/api/announcements")
-    public ResponseForm addAnnouncement(@RequestBody AnnouncementReference reference) {
-        try {
-            Announcement announcement = new Announcement(timeTableService.getById(reference.getTimeTable()), reference.getMessage());
-            return new ResponseForm("success", null, announcementsService.addAnnouncement(announcement));
-        } catch (Exception e) {
-            return new ResponseForm("failed", "bad credential " + e.getMessage(), null);
+    public ResponseForm addAnnouncement(@RequestBody AnnouncementReference reference) throws Exception {
+        Announcement announcement = new Announcement(timeTableService.getById(reference.getTimeTable()), reference.getMessage());
+        return new ResponseForm("success", null, announcementsService.addAnnouncement(announcement));
 
-        }
 
     }
 
@@ -253,8 +249,8 @@ public class CourseController {
 
     @PutMapping("/api/announcements/{id}")
     public ResponseForm updateAnnouncement(@PathVariable int id, @RequestBody AnnouncementReference reference) throws Exception {
-            Announcement announcement = new Announcement(timeTableService.getById(reference.getTimeTable()), reference.getMessage());
-            return new ResponseForm("success", null, announcementsService.editAnnouncement(id, announcement));
+        Announcement announcement = new Announcement(timeTableService.getById(reference.getTimeTable()), reference.getMessage());
+        return new ResponseForm("success", null, announcementsService.editAnnouncement(id, announcement));
     }
 
     @DeleteMapping("/api/announcements/{id}")
