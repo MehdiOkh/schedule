@@ -96,7 +96,7 @@ public class CoursesService {
         if (courseRepo.findById(id).isPresent()) {
             course = courseRepo.findById(id).get();
         } else {
-            throw new Exception();
+            throw new CourseException.CourseNotFoundException("Course not found!");
         }
 
         return course;
@@ -108,7 +108,7 @@ public class CoursesService {
         if (courseRepo.findById(id).isPresent()) {
             formerCourse = courseRepo.findById(id).get();
         } else {
-            throw new Exception();
+            throw new CourseException.CourseNotFoundException("Course not found!");
         }
 
         if (!course.getTitle().equals("")) {

@@ -62,24 +62,15 @@ public class CourseController {
 
 
     @GetMapping("/api/courses/{id}")
-    public ResponseForm getCourseById(@PathVariable int id) {
-        try {
+    public ResponseForm getCourseById(@PathVariable int id) throws Exception {
             Course course = coursesService.getById(id);
             return new ResponseForm("success", null, course);
-
-        } catch (Exception e) {
-            return new ResponseForm("failed", "invalid id " + e.getMessage(), null);
-        }
     }
 
     @PutMapping("/api/courses/{id}")
-    public ResponseForm updateCourse(@PathVariable int id, @RequestBody Course course) {
-        try {
+    public ResponseForm updateCourse(@PathVariable int id, @RequestBody Course course) throws Exception {
             Course updatedCourse = coursesService.editCourse(id, course);
             return new ResponseForm("success", null, updatedCourse);
-        } catch (Exception e) {
-            return new ResponseForm("failed", "invalid id or body " + e.getMessage(), null);
-        }
     }
 
     @DeleteMapping("/api/courses/{id}")
@@ -93,14 +84,9 @@ public class CourseController {
     public ResponseForm getCourseTimeTable(
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @PathVariable int id) {
-        try {
+            @PathVariable int id) throws Exception {
             CoursesService.CourseTimeTables timeTables = coursesService.getCourseTimeTables(id, pageSize, page);
             return new ResponseForm("success", null, timeTables);
-
-        } catch (Exception e) {
-            return new ResponseForm("failed", "invalid id " + e.getMessage(), null);
-        }
     }
 
     @GetMapping("/api/courses/{id}/masters")
@@ -112,24 +98,20 @@ public class CourseController {
     }
 
     @PostMapping("/api/courses/{id}/choose")
-    public ResponseForm masterCourseChoose(@PathVariable int id, @RequestHeader String authorization) {
-        try {
-            //**************** MASTER DYNAMIC *****************
-            String masterCode = jwtTokenUtil.extractUsername(authorization);
+    public ResponseForm masterCourseChoose(@PathVariable int id, @RequestHeader String authorization) throws Exception {
+        //**************** MASTER DYNAMIC *****************
+        String masterCode = jwtTokenUtil.extractUsername(authorization);
 
-            if (authorization.startsWith("Bearer ")) {
-                masterCode = jwtTokenUtil.extractUsername(authorization.substring(7));
-            }
-
-            Master master = usersService.findByCode(masterCode).getMasterList().get(0);
-            //**************** MASTER DYNAMIC *****************
-
-            coursesService.masterCourseChoose(master, id);
-            return new ResponseForm("success", null, null);
-        } catch (Exception e) {
-            return new ResponseForm("failed", "bad credential " + e.getMessage(), null);
-
+        if (authorization.startsWith("Bearer ")) {
+            masterCode = jwtTokenUtil.extractUsername(authorization.substring(7));
         }
+
+        Master master = usersService.findByCode(masterCode).getMasterList().get(0);
+        //**************** MASTER DYNAMIC *****************
+
+        coursesService.masterCourseChoose(master, id);
+        return new ResponseForm("success", null, null);
+
 
     }
 
