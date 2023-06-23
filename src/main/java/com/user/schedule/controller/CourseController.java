@@ -294,5 +294,25 @@ public class CourseController {
         return new ResponseForm("success", null, announcements);
 
     }
+    @GetMapping("/api/announcements/master-announcements")
+    public ResponseForm masterAnnouncements(@RequestHeader String authorization) {
+        String masterCode;
+        if (authorization.startsWith("Bearer ")) {
+            masterCode = jwtTokenUtil.extractUsername(authorization.substring(7));
+        } else {
+            masterCode = jwtTokenUtil.extractUsername(authorization);
+
+        }
+        Master master = usersService.findByCode(masterCode).getMasterList().get(0);
+
+        List<Announcement> announcements = new LinkedList<>();
+
+        for (TimeTable timeTable : master.getTimeTableList()) {
+            announcements.addAll(timeTable.getAnnouncementList());
+        }
+
+        return new ResponseForm("success", null, announcements);
+
+    }
 
 }
