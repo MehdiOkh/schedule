@@ -283,6 +283,24 @@ public class TimeController {
         return new ResponseForm("success", null, null);
 
     }
+    @DeleteMapping("/api/time-tables/{id}/remove")
+    public ResponseForm studentTimeTableRemove(@PathVariable int id, @RequestHeader String authorization) throws Exception {
+        //**************** STUDENT DYNAMIC *****************
+        String studentCode;
+
+        if (authorization.startsWith("Bearer ")) {
+            studentCode = jwtTokenUtil.extractUsername(authorization.substring(7));
+        } else {
+            studentCode = jwtTokenUtil.extractUsername(authorization);
+        }
+        Student student = usersService.findByCode(studentCode).getStudentList().get(0);
+        if (student == null) throw new UnitPickException.StudentNotFound("Illegal access");
+        //**************** STUDENT DYNAMIC *****************
+
+        timeTableService.studentCourseRemove(student, id);
+        return new ResponseForm("success", null, null);
+
+    }
 
     @GetMapping("/api/time-tables/student-units")
     public ResponseForm studentUnits(@RequestHeader String authorization) {

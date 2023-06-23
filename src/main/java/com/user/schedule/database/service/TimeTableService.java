@@ -1,14 +1,13 @@
 package com.user.schedule.database.service;
 
 import com.user.schedule.database.model.*;
-import com.user.schedule.database.repository.CourseRepo;
-import com.user.schedule.database.repository.MasterRepo;
-import com.user.schedule.database.repository.TimeTableBellRepo;
-import com.user.schedule.database.repository.TimeTableRepo;
+import com.user.schedule.database.repository.*;
 import com.user.schedule.exceptions.UnitPickException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +22,12 @@ public class TimeTableService {
     private CourseRepo courseRepo;
     @Autowired
     private MasterRepo masterRepo;
+
+    @Autowired
+    private StudentRepo studentRepo;
+
+    @Autowired
+    private StudentUnitRepo studentUnitRepo;
 
     public TimeTables getTimeTableList(int studentId, int courseId, int masterId, int pageSize, int page) {
         return new TimeTables(studentId, courseId, masterId, pageSize, page);
@@ -45,18 +50,56 @@ public class TimeTableService {
 
     public void studentCourseChoose(Student student, int tableId) throws Exception {
         TimeTable timeTable = getById(tableId);
+        Timestamp pickTime = student.getUnitPickTimeTable().getPickTime();
+        Timestamp modifyTime = student.getUnitPickTimeTable().getModifyTime();
         for (StudentUnit unit : student.getStudentUnits()) {
             if (unit.getTimeTable().getId() == timeTable.getId()) {
                 throw new UnitPickException.UnitNotFound("Student already has this unit.");
             }
         }
-        StudentUnit studentUnit = new StudentUnit(student);
-        studentUnit.setGrade(0.25F);
-        studentUnit.setTerm(1);
-        studentUnit.setTimeTable(timeTable);
-        timeTable.getStudentUnits().add(studentUnit);
+        if ((pickTime.toLocalDateTime().minusDays(1).isBefore(LocalDateTime.now()) &&
+                pickTime.toLocalDateTime().plusDays(1).isAfter(LocalDateTime.now())) ||
+                (modifyTime.toLocalDateTime().minusDays(1).isBefore(LocalDateTime.now()) &&
+                        modifyTime.toLocalDateTime().plusDays(1).isAfter(LocalDateTime.now()))
+        ) {
+            StudentUnit studentUnit = new StudentUnit(student);
+            studentUnit.setGrade(0.25F);
+            studentUnit.setTerm(studentUnit.studentTerm(student.getUnitPickTimeTable().getEntranceYear()));
+            studentUnit.setTimeTable(timeTable);
+            studentUnitRepo.save(studentUnit);
+            timeTable.getStudentUnits().add(studentUnit);
 //        master.getCourseList().add(course);
-        timeTableRepo.flush();
+            timeTableRepo.flush();
+        } else {
+            throw new UnitPickException.AccessTimeOver("Access time is over!");
+        }
+
+    }
+
+    public void studentCourseRemove(Student student, int tableId) throws Exception {
+        TimeTable timeTable = getById(tableId);
+        Timestamp pickTime = student.getUnitPickTimeTable().getPickTime();
+        Timestamp modifyTime = student.getUnitPickTimeTable().getModifyTime();
+
+        if ((pickTime.toLocalDateTime().minusDays(1).isBefore(LocalDateTime.now()) &&
+                pickTime.toLocalDateTime().plusDays(1).isAfter(LocalDateTime.now())) ||
+                (modifyTime.toLocalDateTime().minusDays(1).isBefore(LocalDateTime.now()) &&
+                        modifyTime.toLocalDateTime().plusDays(1).isAfter(LocalDateTime.now()))
+        ) {
+            for (StudentUnit unit : student.getStudentUnits()) {
+                if (unit.getTimeTable().getId() == timeTable.getId()) {
+                    student.getStudentUnits().remove(unit);
+                    timeTable.getStudentUnits().remove(unit);
+                    timeTableRepo.save(timeTable);
+                    studentRepo.save(student);
+                    studentUnitRepo.delete(unit);
+                    return;
+                }
+            }
+        } else {
+            throw new UnitPickException.AccessTimeOver("Access time is over!");
+        }
+
     }
 
     public void startProcess(int maxClassPerBell) throws Exception {

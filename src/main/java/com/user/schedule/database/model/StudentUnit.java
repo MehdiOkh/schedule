@@ -33,6 +33,10 @@ public class StudentUnit {
         this.student = student;
     }
 
+    public int studentTerm(int entrance) {
+        return (int) (1402-entrance)*2;
+    }
+
     public int getId() {
         return id;
     }
