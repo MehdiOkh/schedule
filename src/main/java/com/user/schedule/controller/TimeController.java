@@ -300,6 +300,21 @@ public class TimeController {
 
 
     }
+    @GetMapping("/api/time-tables/master")
+    public ResponseForm masterTimeTable(@RequestHeader String authorization) {
+
+        String masterCode;
+
+        if (authorization.startsWith("Bearer ")) {
+            masterCode = jwtTokenUtil.extractUsername(authorization.substring(7));
+        } else {
+            masterCode = jwtTokenUtil.extractUsername(authorization);
+        }
+        Master master = usersService.findByCode(masterCode).getMasterList().get(0);
+
+        return new ResponseForm("success", null, masterService.getMaterTimeTables(master.getId()));
+
+    }
 
 //    @PostMapping("/api/time-tables/StartProcess")
 //    public ResponseForm startProcess(
