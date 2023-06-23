@@ -22,7 +22,7 @@ public class TimeTable {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "timeTable", cascade = CascadeType.ALL)
     private List<TimeTableBell> timeTableBellList = new ArrayList<>();
 
