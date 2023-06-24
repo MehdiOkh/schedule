@@ -63,14 +63,14 @@ public class CourseController {
 
     @GetMapping("/api/courses/{id}")
     public ResponseForm getCourseById(@PathVariable int id) throws Exception {
-            Course course = coursesService.getById(id);
-            return new ResponseForm("success", null, course);
+        Course course = coursesService.getById(id);
+        return new ResponseForm("success", null, course);
     }
 
     @PutMapping("/api/courses/{id}")
     public ResponseForm updateCourse(@PathVariable int id, @RequestBody Course course) throws Exception {
-            Course updatedCourse = coursesService.editCourse(id, course);
-            return new ResponseForm("success", null, updatedCourse);
+        Course updatedCourse = coursesService.editCourse(id, course);
+        return new ResponseForm("success", null, updatedCourse);
     }
 
     @DeleteMapping("/api/courses/{id}")
@@ -85,8 +85,8 @@ public class CourseController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @PathVariable int id) throws Exception {
-            CoursesService.CourseTimeTables timeTables = coursesService.getCourseTimeTables(id, pageSize, page);
-            return new ResponseForm("success", null, timeTables);
+        CoursesService.CourseTimeTables timeTables = coursesService.getCourseTimeTables(id, pageSize, page);
+        return new ResponseForm("success", null, timeTables);
     }
 
     @GetMapping("/api/courses/{id}/masters")
@@ -264,7 +264,9 @@ public class CourseController {
     }
 
     @GetMapping("/api/announcements/master-announcements")
-    public ResponseForm masterAnnouncements(@RequestHeader String authorization) {
+    public ResponseForm masterAnnouncements(@RequestHeader String authorization,
+                                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
         String masterCode;
         if (authorization.startsWith("Bearer ")) {
             masterCode = jwtTokenUtil.extractUsername(authorization.substring(7));
@@ -274,13 +276,7 @@ public class CourseController {
         }
         Master master = usersService.findByCode(masterCode).getMasterList().get(0);
 
-        List<Announcement> announcements = new LinkedList<>();
-
-        for (TimeTable timeTable : master.getTimeTableList()) {
-            announcements.addAll(timeTable.getAnnouncementList());
-        }
-
-        return new ResponseForm("success", null, announcements);
+        return new ResponseForm("success", null, announcementsService.getAnnouncementList(master.getId(), 0, pageSize, page));
 
     }
 

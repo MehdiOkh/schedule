@@ -94,10 +94,10 @@ public class AnnouncementsService {
             }else if (tableId!=0){
                 list = timeTableRepo.findById(tableId).get().getAnnouncementList();
             }else if (masterId!=0){
-                for (Course course : masterRepo.findById(masterId).get().getCourseList()){
-                    for (TimeTable timeTable : course.getTimeTableList()){
+                for (TimeTable timeTable : masterRepo.findById(masterId).get().getTimeTableList()){
+//                    for (TimeTable timeTable : course.getTimeTableList()){
                         list.addAll(timeTable.getAnnouncementList());
-                    }
+//                    }
                 }
             }else {
                 for (TimeTable timeTable : timeTableRepo.findAll()){
