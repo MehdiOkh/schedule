@@ -319,7 +319,9 @@ public class TimeController {
 
     }
     @GetMapping("/api/time-tables/master")
-    public ResponseForm masterTimeTable(@RequestHeader String authorization) {
+    public ResponseForm masterTimeTable(@RequestHeader String authorization,
+                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                        @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
 
         String masterCode;
 
@@ -330,7 +332,7 @@ public class TimeController {
         }
         Master master = usersService.findByCode(masterCode).getMasterList().get(0);
 
-        return new ResponseForm("success", null, masterService.getMaterTimeTables(master.getId()));
+        return new ResponseForm("success", null, timeTableService.getTimeTableList(0, 0, master.getId(), pageSize, page));
 
     }
 
