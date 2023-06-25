@@ -283,6 +283,7 @@ public class TimeController {
         return new ResponseForm("success", null, null);
 
     }
+
     @DeleteMapping("/api/time-tables/{id}/remove")
     public ResponseForm studentTimeTableRemove(@PathVariable int id, @RequestHeader String authorization) throws Exception {
         //**************** STUDENT DYNAMIC *****************
@@ -318,6 +319,7 @@ public class TimeController {
 
 
     }
+
     @GetMapping("/api/time-tables/master")
     public ResponseForm masterTimeTable(@RequestHeader String authorization,
                                         @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
@@ -333,6 +335,17 @@ public class TimeController {
         Master master = usersService.findByCode(masterCode).getMasterList().get(0);
 
         return new ResponseForm("success", null, timeTableService.getTimeTableList(0, 0, master.getId(), pageSize, page));
+
+    }
+
+    @GetMapping("/api/time-tables/{timeTableId}/students")
+    public ResponseForm timeTableStudents(
+            @PathVariable  int timeTableId,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) throws Exception {
+
+        timeTableService.getById(timeTableId);
+        return new ResponseForm("success", null, studentService.getTimeTableStudents(timeTableId, pageSize, page));
 
     }
 

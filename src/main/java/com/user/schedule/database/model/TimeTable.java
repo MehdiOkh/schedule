@@ -40,7 +40,7 @@ public class TimeTable {
 //    private List<Student> studentList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "student", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "timeTable", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.MERGE}, orphanRemoval = true)
     private List<StudentUnit> studentUnits = new ArrayList<>();
 
     public TimeTable(Master master, Course course) {

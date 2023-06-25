@@ -1,10 +1,7 @@
 package com.user.schedule.controller.handlers;
 
 import com.user.schedule.database.service.ResponseForm;
-import com.user.schedule.exceptions.CourseException;
-import com.user.schedule.exceptions.DayAndBellException;
-import com.user.schedule.exceptions.MajorException;
-import com.user.schedule.exceptions.UnitPickException;
+import com.user.schedule.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -57,7 +54,18 @@ public class ExceptionHandlers {
     @ExceptionHandler
     public ResponseEntity<ResponseForm> announcementNotFound(CourseException.AnnouncementNotFound exception) {
         ResponseForm response = new ResponseForm("error", exception.getMessage(), null);
-        System.out.println("ehy");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseForm> studentNotFound(TimeTableException.StudentNotFound exception) {
+        ResponseForm response = new ResponseForm("error", exception.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseForm> timeTableNotFound(TimeTableException.TimeTableNotFound exception) {
+        ResponseForm response = new ResponseForm("error", exception.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
