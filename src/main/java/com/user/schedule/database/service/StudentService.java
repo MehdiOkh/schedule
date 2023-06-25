@@ -1,5 +1,6 @@
 package com.user.schedule.database.service;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.user.schedule.database.model.Student;
 import com.user.schedule.database.model.StudentUnit;
 import com.user.schedule.database.model.TimeTable;
@@ -26,6 +27,67 @@ public class StudentService {
 
     public Students getTimeTableStudents(int timeTableId, int pageSize, int page) {
         return new Students(timeTableId, pageSize, page);
+    }
+
+    public void submitStudentsGrade(int timeTableId, List<ReportGrade.StudentGrade> studentsGrade) {
+        for (StudentUnit studentUnit : timeTableRepo.getById(timeTableId).getStudentUnits()
+        ) {
+            for (ReportGrade.StudentGrade studentGrade : studentsGrade
+            ) {
+                if (studentGrade.getId() == studentUnit.getStudent().getId()) {
+                    studentUnit.setGrade( Float.parseFloat(studentGrade.getGrade()));
+                }
+            }
+
+        }
+        studentRepo.flush();
+    }
+
+    public static class ReportGrade {
+        private List<StudentGrade> reportGrade;
+
+        public ReportGrade(List<StudentGrade> reportGrade) {
+            this.reportGrade = reportGrade;
+        }
+
+        public ReportGrade() {
+        }
+
+        public List<StudentGrade> getReportGrade() {
+            return reportGrade;
+        }
+
+        public void setReportGrade(List<StudentGrade> reportGrade) {
+            this.reportGrade = reportGrade;
+        }
+
+        public static class StudentGrade {
+            private int id;
+
+            private String grade;
+
+            public StudentGrade(int id, String grade) {
+                this.id = id;
+                this.grade = grade;
+            }
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public String getGrade() {
+                return grade;
+            }
+
+            public void setGrade(String grade) {
+                this.grade = grade;
+            }
+        }
+
     }
 
     public class Students {

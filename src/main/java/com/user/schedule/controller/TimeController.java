@@ -7,6 +7,8 @@ import com.user.schedule.security.service.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -340,13 +342,22 @@ public class TimeController {
 
     @GetMapping("/api/time-tables/{timeTableId}/students")
     public ResponseForm timeTableStudents(
-            @PathVariable  int timeTableId,
+            @PathVariable int timeTableId,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page) throws Exception {
 
         timeTableService.getById(timeTableId);
         return new ResponseForm("success", null, studentService.getTimeTableStudents(timeTableId, pageSize, page));
 
+    }
+
+    @PostMapping("/api/time-tables/{timeTableId}/students-grade")
+    public ResponseForm submitStudentsGrade(
+            @PathVariable int timeTableId, @RequestBody() StudentService.ReportGrade reportGrade) throws Exception {
+
+        timeTableService.getById(timeTableId);
+        studentService.submitStudentsGrade(timeTableId, reportGrade.getReportGrade());
+        return new ResponseForm("success", null, null);
     }
 
 //    @PostMapping("/api/time-tables/StartProcess")
