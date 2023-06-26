@@ -91,7 +91,7 @@ public class StudentService {
     }
 
     public class Students {
-        private List<Student> list = null;
+        private List<StudentUnit> list = null;
 
         private int pageSize;
         private int page;
@@ -103,16 +103,16 @@ public class StudentService {
             this.list = listMaker(timeTableId);
         }
 
-        private List<Student> listMaker(int timeTableId) {
+        private List<StudentUnit> listMaker(int timeTableId) {
 
-            List<Student> list = new ArrayList<>();
-            List<Student> temp = new ArrayList<>();
+            List<StudentUnit> list = new ArrayList<>();
+            List<StudentUnit> temp = new ArrayList<>();
 
             int begin = (page - 1) * pageSize == 0 ? 0 : (page - 1) * pageSize;
             int end = page * pageSize;
             TimeTable t = timeTableRepo.getById(timeTableId);
             for (StudentUnit studentUnit : timeTableRepo.getById(timeTableId).getStudentUnits()) {
-                list.add(studentUnit.getStudent());
+                list.add(studentUnit);
 
             }
 
@@ -125,7 +125,7 @@ public class StudentService {
             return temp;
         }
 
-        public List<Student> getList() {
+        public List<StudentUnit> getList() {
             return list;
         }
 
