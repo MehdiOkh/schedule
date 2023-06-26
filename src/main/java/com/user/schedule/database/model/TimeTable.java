@@ -14,6 +14,10 @@ public class TimeTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "time_table_status")
+    private StatusType status;
+
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "master_id")
     private Master master;
@@ -46,6 +50,7 @@ public class TimeTable {
     public TimeTable(Master master, Course course) {
         this.master = master;
         this.course = course;
+        this.status = StatusType.not_accepted;
     }
 
     public TimeTable() {
@@ -110,5 +115,17 @@ public class TimeTable {
 
     public void setStudentUnits(List<StudentUnit> studentUnits) {
         this.studentUnits = studentUnits;
+    }
+
+    public StatusType getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusType status) {
+        this.status = status;
+    }
+
+    public enum StatusType {
+        accepted, not_accepted
     }
 }
