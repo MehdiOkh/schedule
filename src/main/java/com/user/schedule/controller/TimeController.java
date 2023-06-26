@@ -359,6 +359,14 @@ public class TimeController {
         studentService.submitStudentsGrade(timeTableId, reportGrade.getReportGrade());
         return new ResponseForm("success", null, null);
     }
+    @PutMapping("/api/time-tables/{timeTableId}/accept")
+    public ResponseForm acceptTimeTable(
+            @PathVariable int timeTableId) {
+
+        timeTableService.acceptTimeTable(timeTableId);
+
+        return new ResponseForm("success", null, null);
+    }
 
 //    @PostMapping("/api/time-tables/StartProcess")
 //    public ResponseForm startProcess(

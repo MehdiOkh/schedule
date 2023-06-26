@@ -2,6 +2,7 @@ package com.user.schedule.database.service;
 
 import com.user.schedule.database.model.*;
 import com.user.schedule.database.repository.*;
+import com.user.schedule.exceptions.TimeTableException;
 import com.user.schedule.exceptions.UnitPickException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,19 @@ public class TimeTableService {
             throw new UnitPickException.UnitNotFound("Your picked unit not found");
         }
         return timeTableBell;
+    }
+
+    public void acceptTimeTable(int id) {
+        TimeTable timeTable;
+
+        if (timeTableRepo.findById(id).isPresent()) {
+            timeTable = timeTableRepo.findById(id).get();
+            timeTable.setStatus(TimeTable.StatusType.accepted);
+            timeTableRepo.flush();
+        } else {
+            throw new TimeTableException.TimeTableNotFound("time table with specified id not found!");
+        }
+
     }
 
     public void studentCourseChoose(Student student, int tableId) throws Exception {
