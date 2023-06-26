@@ -2,6 +2,7 @@ package com.user.schedule.controller;
 
 import com.user.schedule.database.model.Master;
 import com.user.schedule.database.model.Profile;
+import com.user.schedule.database.model.Student;
 import com.user.schedule.database.model.User;
 import com.user.schedule.database.service.MasterService;
 import com.user.schedule.database.service.ResponseForm;
@@ -99,6 +100,20 @@ public class UsersController {
         } catch (Exception e) {
             return new ResponseForm("failed", "invalid id " + e.getMessage(), null);
         }
+    }
+
+    @GetMapping("/api/student-detail")
+    public ResponseForm getStudentDetail(@RequestHeader String authorization) {
+        String userCode;
+
+        if (authorization.startsWith("Bearer ")) {
+            userCode = jwtTokenUtil.extractUsername(authorization.substring(7));
+        } else {
+            userCode = jwtTokenUtil.extractUsername(authorization);
+        }
+
+        Student student = usersService.findByCode(userCode).getStudentList().get(0);
+        return new ResponseForm("success", null, student);
     }
 
     @GetMapping("/api/masters")

@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/users/profile", "/api/users/profile/change-password").hasAnyRole("ADMIN", "MASTER", "STUDENT")
                 .antMatchers("/api/announcements/**", "/api/time-table-bells/**", "/api/courses/**").hasAnyRole("ADMIN", "MASTER")
                 .antMatchers("/api/users/**", "/api/days/**", "/api/bells/**", "/api/time-tables/StartProcess", "api/majors/**", "api/unit-pick-time/**", "/api/masters").hasRole("ADMIN")
-                .antMatchers("/api/time-tables/*/Choose", "/api/time-tables/*/remove", "/api/announcements/student-announcements", "/api/time-tables/*/student-units").hasRole("STUDENT")
+                .antMatchers("/api/time-tables/*/Choose", "/api/time-tables/*/remove", "/api/announcements/student-announcements", "/api/time-tables/*/student-units","/api/student-detail").hasRole("STUDENT")
                 .antMatchers("/api/announcements/master-announcements").hasRole("MASTER")
                 .antMatchers("/api/auth/login", "/v3/**")
                 .permitAll()
