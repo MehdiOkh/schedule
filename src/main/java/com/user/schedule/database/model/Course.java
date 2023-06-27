@@ -42,7 +42,7 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<TimeTable> timeTableList = new ArrayList<>();
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "course_prerequisite_table",
