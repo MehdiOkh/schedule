@@ -51,6 +51,7 @@ public class CoursesService {
         if (prerequisiteList.length != 0) {
             for (String name : prerequisiteList
             ) {
+                if(name.equals(courseName)) throw new CourseException.CourseNotFoundException("course can not submit to itself as a prerequisite");
                 prerequisites.add(getCourseByName(name));
             }
 
