@@ -71,6 +71,17 @@ public class TimeTableService {
                 throw new UnitPickException.UnitNotFound("Student already has this unit.");
             }
         }
+        for (Course course : timeTable.getCourse().getCoursePrerequisiteList()
+        ) {
+            boolean seen = false;
+            for (StudentUnit unit : student.getStudentUnits()) {
+                if (unit.getTimeTable().getCourse().getTitle().equals(course.getTitle())) {
+                    seen = true;
+                    break;
+                }
+            }
+            if (!seen) throw new UnitPickException.UnitNotFound("Student does not pass the prerequisite unit.");
+        }
         if ((pickTime.toLocalDateTime().minusDays(1).isBefore(LocalDateTime.now()) &&
                 pickTime.toLocalDateTime().plusDays(1).isAfter(LocalDateTime.now())) ||
                 (modifyTime.toLocalDateTime().minusDays(1).isBefore(LocalDateTime.now()) &&
