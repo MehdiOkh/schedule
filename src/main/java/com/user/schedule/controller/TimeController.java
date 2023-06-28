@@ -1,14 +1,14 @@
 package com.user.schedule.controller;
 
 import com.user.schedule.database.model.*;
+import com.user.schedule.database.seeder.BellSeeder;
+import com.user.schedule.database.seeder.DaySeeder;
 import com.user.schedule.database.service.*;
 import com.user.schedule.exceptions.UnitPickException;
 import com.user.schedule.security.service.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -36,10 +36,14 @@ public class TimeController {
 
     private final StudentService studentService;
 
+    private final DaySeeder daySeeder;
+
+    private final BellSeeder bellSeeder;
+
 
     public TimeController(UsersService usersService, BellsService bellsService, DaysService daysService,
                           TimeTableBellsService timeTableBellsService, TimeTableService timeTableService,
-                          JwtUtil jwtTokenUtil, UnitPickTimeService unitPickTimeService, MasterService masterService, CoursesService coursesService, StudentService studentService) {
+                          JwtUtil jwtTokenUtil, UnitPickTimeService unitPickTimeService, MasterService masterService, CoursesService coursesService, StudentService studentService, DaySeeder daySeeder, BellSeeder bellSeeder) {
         this.usersService = usersService;
         this.bellsService = bellsService;
         this.daysService = daysService;
@@ -50,6 +54,8 @@ public class TimeController {
         this.masterService = masterService;
         this.coursesService = coursesService;
         this.studentService = studentService;
+        this.daySeeder = daySeeder;
+        this.bellSeeder = bellSeeder;
     }
 
 
@@ -130,6 +136,11 @@ public class TimeController {
         }
 
     }
+    @PostMapping("/api/bells/seed")
+    public ResponseForm seedBells(){
+        bellSeeder.populateBellsOfDay();
+        return new ResponseForm("success", null, null);
+    }
 
     // <-----------------   DAYS PART ---------------------->
 
@@ -176,6 +187,12 @@ public class TimeController {
             return new ResponseForm("failed", "invalid id " + e.getMessage(), null);
         }
 
+    }
+
+    @PostMapping("/api/days/seed")
+    public ResponseForm seedDays(){
+        daySeeder.populateWeekDays();
+        return new ResponseForm("success", null, null);
     }
 
     // <-----------------   TIMETABLEBELL PART ---------------------->
