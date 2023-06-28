@@ -18,6 +18,10 @@ public class TimeTable {
     @Column(name = "time_table_status")
     private StatusType status;
 
+
+    @Column(name = "term")
+    private String term;
+
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "master_id")
     private Master master;
@@ -123,6 +127,14 @@ public class TimeTable {
 
     public void setStatus(StatusType status) {
         this.status = status;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     public enum StatusType {

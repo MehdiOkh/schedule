@@ -30,8 +30,8 @@ public class TimeTableService {
     @Autowired
     private StudentUnitRepo studentUnitRepo;
 
-    public TimeTables getTimeTableList(int studentId, int courseId, int masterId, int pageSize, int page) {
-        return new TimeTables(studentId, courseId, masterId, pageSize, page);
+    public TimeTables getTimeTableList(int studentId, int courseId, int masterId, String term, int pageSize, int page) {
+        return new TimeTables(studentId, courseId, masterId, term, pageSize, page);
     }
 
     public TimeTable addTimeTable(TimeTable timeTable) {
@@ -207,14 +207,14 @@ public class TimeTableService {
         private int totalPage;
 
 
-        public TimeTables(int studentId, int courseId, int masterId, int pageSize, int page) {
+        public TimeTables(int studentId, int courseId, int masterId, String term, int pageSize, int page) {
             this.pageSize = pageSize;
             this.page = page;
-            this.list = listMaker(studentId, courseId, masterId, pageSize, page);
+            this.list = listMaker(studentId, courseId, masterId, term, pageSize, page);
 
         }
 
-        public List<TimeTable> listMaker(int studentId, int courseId, int masterId, int pageSize, int page) {
+        public List<TimeTable> listMaker(int studentId, int courseId, int masterId, String term, int pageSize, int page) {
             List<TimeTable> list = new ArrayList<>();
             List<TimeTable> temp = new ArrayList<>();
             if (studentId != 0) {
@@ -234,6 +234,13 @@ public class TimeTableService {
             } else if (masterId != 0) {
                 for (TimeTable timeTable : timeTableRepo.findAll()) {
                     if (timeTable.getMaster().getId() == masterId) {
+                        list.add(timeTable);
+                    }
+                }
+            } else if (!term.isEmpty()) {
+                for (TimeTable timeTable : timeTableRepo.findAll()) {
+                    if (timeTable.getTerm().split("/")[0].equals(term.split("/")[0])
+                            && timeTable.getTerm().split("/")[1].equals(term.split("/")[1])) {
                         list.add(timeTable);
                     }
                 }

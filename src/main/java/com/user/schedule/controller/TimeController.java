@@ -136,8 +136,9 @@ public class TimeController {
         }
 
     }
+
     @PostMapping("/api/bells/seed")
-    public ResponseForm seedBells(){
+    public ResponseForm seedBells() {
         bellSeeder.populateBellsOfDay();
         return new ResponseForm("success", null, null);
     }
@@ -190,7 +191,7 @@ public class TimeController {
     }
 
     @PostMapping("/api/days/seed")
-    public ResponseForm seedDays(){
+    public ResponseForm seedDays() {
         daySeeder.populateWeekDays();
         return new ResponseForm("success", null, null);
     }
@@ -253,6 +254,7 @@ public class TimeController {
         Master master = masterService.getMasterById(timeTableReq.getMasterId());
         Course course = coursesService.getById(timeTableReq.getCourseId());
         TimeTable timeTable = new TimeTable(master, course);
+        timeTable.setTerm(timeTableReq.getTerm());
         for (int id : timeTableReq.timeTableBellsId) {
             TimeTableBell timeTableBell = timeTableBellsService.getById(id);
             timeTable.getTimeTableBellList().add(timeTableBell);
@@ -267,10 +269,11 @@ public class TimeController {
             @RequestParam(value = "studentId", required = false, defaultValue = "0") int studentId,
             @RequestParam(value = "courseId", required = false, defaultValue = "0") int courseId,
             @RequestParam(value = "masterId", required = false, defaultValue = "0") int masterId,
+            @RequestParam(value = "term", required = false, defaultValue = "0") String term,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
 
-        return new ResponseForm("success", null, timeTableService.getTimeTableList(studentId, courseId, masterId, pageSize, page));
+        return new ResponseForm("success", null, timeTableService.getTimeTableList(studentId, courseId, masterId, term, pageSize, page));
     }
 
     @GetMapping("/api/time-tables/{id}")
@@ -353,7 +356,7 @@ public class TimeController {
         }
         Master master = usersService.findByCode(masterCode).getMasterList().get(0);
 
-        return new ResponseForm("success", null, timeTableService.getTimeTableList(0, 0, master.getId(), pageSize, page));
+        return new ResponseForm("success", null, timeTableService.getTimeTableList(0, 0, master.getId(), "", pageSize, page));
 
     }
 
@@ -376,6 +379,7 @@ public class TimeController {
         studentService.submitStudentsGrade(timeTableId, reportGrade.getReportGrade());
         return new ResponseForm("success", null, null);
     }
+
     @PutMapping("/api/time-tables/{timeTableId}/accept")
     public ResponseForm acceptTimeTable(
             @PathVariable int timeTableId) {
@@ -401,12 +405,15 @@ public class TimeController {
     private static class TimeTableReq {
         private int courseId;
         private int masterId;
+
+        private String term;
         private ArrayList<Integer> timeTableBellsId;
 
-        public TimeTableReq(int courseId, int masterId, ArrayList<Integer> timeTableBellsId) {
+        public TimeTableReq(int courseId, int masterId, String term, ArrayList<Integer> timeTableBellsId) {
             this.courseId = courseId;
             this.masterId = masterId;
             this.timeTableBellsId = timeTableBellsId;
+            this.term = term;
         }
 
         public int getCourseId() {
@@ -419,6 +426,10 @@ public class TimeController {
 
         public ArrayList<Integer> getTimeTableBellsId() {
             return timeTableBellsId;
+        }
+
+        public String getTerm() {
+            return term;
         }
     }
 
