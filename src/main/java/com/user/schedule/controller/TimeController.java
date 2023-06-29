@@ -269,7 +269,7 @@ public class TimeController {
             @RequestParam(value = "studentId", required = false, defaultValue = "0") int studentId,
             @RequestParam(value = "courseId", required = false, defaultValue = "0") int courseId,
             @RequestParam(value = "masterId", required = false, defaultValue = "0") int masterId,
-            @RequestParam(value = "term", required = false, defaultValue = "0") String term,
+            @RequestParam(value = "term", required = false, defaultValue = "") String term,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
 
