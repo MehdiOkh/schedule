@@ -1,6 +1,5 @@
 package com.user.schedule.database.service;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.user.schedule.database.model.Student;
 import com.user.schedule.database.model.StudentUnit;
 import com.user.schedule.database.model.TimeTable;
@@ -20,9 +19,22 @@ public class StudentService {
     private TimeTableRepo timeTableRepo;
 
 
-    public List<StudentUnit> getStudentUnits(int studentId) {
+    public List<StudentUnit> getStudentUnits(int studentId, String term) {
+        List<StudentUnit> temp = new ArrayList<>();
         Student currentStudent = studentRepo.getById(studentId);
-        return currentStudent.getStudentUnits();
+        if (!term.isEmpty()) {
+            for (StudentUnit unit : currentStudent.getStudentUnits()
+            ) {
+                if (unit.getTimeTable().getTerm().split("_")[0].equals(term.split("_")[0])
+                        && unit.getTimeTable().getTerm().split("_")[1].equals(term.split("_")[1])) {
+
+                }
+                temp.add(unit);
+            }
+            return temp;
+        } else {
+            return currentStudent.getStudentUnits();
+        }
     }
 
     public Students getTimeTableStudents(int timeTableId, int pageSize, int page) {
@@ -35,7 +47,7 @@ public class StudentService {
             for (ReportGrade.StudentGrade studentGrade : studentsGrade
             ) {
                 if (studentGrade.getId() == studentUnit.getStudent().getId()) {
-                    studentUnit.setGrade( Float.parseFloat(studentGrade.getGrade()));
+                    studentUnit.setGrade(Float.parseFloat(studentGrade.getGrade()));
                 }
             }
 

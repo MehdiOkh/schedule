@@ -326,7 +326,8 @@ public class TimeController {
     }
 
     @GetMapping("/api/time-tables/student-units")
-    public ResponseForm studentUnits(@RequestHeader String authorization) {
+    public ResponseForm studentUnits(@RequestHeader String authorization, @RequestParam(value = "term", required = false, defaultValue = "") String term
+    ) {
 
         String studentCode;
 
@@ -337,7 +338,7 @@ public class TimeController {
         }
         Student student = usersService.findByCode(studentCode).getStudentList().get(0);
 
-        return new ResponseForm("success", null, studentService.getStudentUnits(student.getId()));
+        return new ResponseForm("success", null, studentService.getStudentUnits(student.getId(), term));
 
 
     }
