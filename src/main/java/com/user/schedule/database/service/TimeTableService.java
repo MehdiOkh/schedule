@@ -239,8 +239,8 @@ public class TimeTableService {
                 }
             } else if (!term.isEmpty()) {
                 for (TimeTable timeTable : timeTableRepo.findAll()) {
-                    if (timeTable.getTerm().split("/")[0].equals(term.split("/")[0])
-                            && timeTable.getTerm().split("/")[1].equals(term.split("/")[1])) {
+                    if (timeTable.getTerm().split("_")[0].equals(term.split("_")[0])
+                            && timeTable.getTerm().split("_")[1].equals(term.split("_")[1])) {
                         list.add(timeTable);
                     }
                 }
