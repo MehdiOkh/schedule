@@ -134,7 +134,7 @@ public class SocketModule {
                 clients.add(client);
                 System.out.println(client.getSessionId());
             }
-            String authorization = client.getHandshakeData().getSingleUrlParam("token");
+            String authorization = client.getHandshakeData().getSingleUrlParam("tkn");
             try {
                 String userCode;
                 if (authorization.startsWith("Bearer ")) {
@@ -169,7 +169,7 @@ public class SocketModule {
 //            log.info("Client[{}] - Disconnected from socket", client.getSessionId().toString());
             System.out.println("client disconnected!");
             clients.removeIf(c -> client.getSessionId().equals(c.getSessionId()));
-            String authorization = client.getHandshakeData().getSingleUrlParam("token");
+            String authorization = client.getHandshakeData().getSingleUrlParam("tkn");
             try {
                 String userCode;
                 if (authorization.startsWith("Bearer ")) {
